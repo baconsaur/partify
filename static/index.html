@@ -1,8 +1,27 @@
 <!doctype html>
-<html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
-  <title>Partify</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <title>🎉 Partify 🎉</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+.bg-success {
+   background-color:#FFFFFF !important;
+}
+.bg-warning {
+   background-color:#4ecdc4 !important;
+}
+
+.btn-primary {
+   background-color:#FF6b6b !important;
+   border: 1px solid #000000;
+
+}
+ </style>
     <script>
         partify = (event) => {
             event.preventDefault();
@@ -25,14 +44,25 @@
     </script>
 </head>
 <body>
-    <h1>Partify</h1>
-    <p>
-        Every emoji should be a party
-    </p>
-    <form onsubmit="partify(event)">
-        <input type="file" />
-        <input type="submit" value="Partify"/>
-    </form>
-    <div id="rendered-gif"></div>
+<center>
+<h1>Partify</h1>
+<h2>🥳 Every emoji should be a party 🥳</h2>
+</center>
+<br>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col bg-success">Before:</div>
+    <div class="col-6 bg-warning">
+        <form class="form-signin" onsubmit="partify(event)">
+ <center>
+     <h1 class="h3 mb-3 font-weight-normal">Select an image file</h1>
+ </center>
+  <input type="file" class="form-control-file" />
+  <input class="btn btn-lg btn-primary btn-block" type="submit" value="🎉 &nbsp; Partify" />
+        </form>
+    </div>
+    <div class="col bg-success" id="rendered-gif">After:</div>
+  </div>
+</div>
 </body>
 </html>

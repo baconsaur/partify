@@ -8,7 +8,7 @@ async def partify_image(request):
     request_body = await request.post()
     try:
         result = partify(request_body['image'].file.read())
-    except KeyError:
+    except AttributeError:
         return web.json_response({'error': 'Missing image'}, status=400)
     except IOError:
         return web.json_response({'error': 'Image could not be processed'}, status=400)
