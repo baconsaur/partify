@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [packages]
-pillow = "==6.2.0"
+pillow = "==8.1.1"
 aiohttp = "==3.4.4"
 
 [requires]
