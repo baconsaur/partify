@@ -11,6 +11,7 @@ def prepare_frames(source_image):
 
     prepared_frames = []
     frame_times = []
+    frame_masks = []
     for raw_frame in ImageSequence.Iterator(source_image):
         # Make sure the image is a square
         if width == height:
@@ -22,23 +23,26 @@ def prepare_frames(source_image):
         if max_size > 128:
             frame = frame.resize((128, 128), Image.ANTIALIAS)
 
-        # Use alpha channel to set a white background
+        # Save alpha channel
         _, _, _, alpha = frame.split()
-        mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
-        frame.paste((255, 255, 255), mask=mask)
+        mask = Image.eval(alpha, lambda a: 0 if a <= 128 else 255)
+        frame_masks.append(mask)
 
         grayscale = ImageOps.grayscale(frame)
 
         prepared_frames.append(grayscale)
         frame_times.append(raw_frame.info.get('duration', 120))
 
+    # Extend length of frames for a satisfying rainbow cycle
     base_frames = prepared_frames.copy()
     base_times = frame_times.copy()
+    base_masks = frame_masks.copy()
     while len(prepared_frames) < DEFAULT_CYCLE:
         prepared_frames.extend(base_frames)
         frame_times.extend(base_times)
+        frame_masks.extend(base_masks)
 
-    return prepared_frames, frame_times
+    return prepared_frames, frame_times, frame_masks
 
 
 def generate_spectrum(frame_count):
@@ -67,8 +71,9 @@ def generate_spectrum(frame_count):
             yield (int(rgb[0] * 255), int(rgb[1] * 255), int(rgb[2] * 255))
 
 
-def colorize_frame(frame, spectrum):
+def colorize_frame(frame, spectrum, mask):
     result = ImageOps.colorize(frame, next(spectrum), (255, 255, 255))
+    result.putalpha(mask)
 
     return result
 
@@ -76,12 +81,13 @@ def colorize_frame(frame, spectrum):
 def partify(image_bytes):
     source_image = Image.open(BytesIO(image_bytes))
 
-    prepared_frames, frame_times = prepare_frames(source_image)
+    prepared_frames, frame_times, frame_masks = prepare_frames(source_image)
     spectrum = generate_spectrum(len(prepared_frames))
 
     output = []
-    for frame in prepared_frames:
-        output.append(colorize_frame(frame, spectrum))
+    for i, frame in enumerate(prepared_frames):
+        frame = colorize_frame(frame, spectrum, frame_masks[i])
+        output.append(frame)
 
     if output:
         with BytesIO() as gif_bytes:
@@ -91,7 +97,7 @@ def partify(image_bytes):
                 save_all=True,
                 append_images=output[1:],
                 loop=0,
-                dispose=2,
+                disposal=2,
                 duration=frame_times,
                 quality=90
             )
