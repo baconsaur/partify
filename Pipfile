@@ -5,7 +5,7 @@ verify_ssl = true
 
 [packages]
 pillow = "==9.1.1"
-aiohttp = "==3.4.4"
+aiohttp = "==3.8.5"
 
 [requires]
 python_version = "3.7"
